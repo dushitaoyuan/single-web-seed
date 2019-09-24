@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+      http://www.springframework.org/schema/context  
+      http://www.springframework.org/schema/context/spring-context.xsd  
+      http://www.springframework.org/schema/mvc  
+      http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+    <!-- 注解扫描包 -->
+    <context:component-scan base-package="com.taoyuanx.mvcseed.controller"/>
+    <!-- 开启注解 -->
+
+
+    <mvc:default-servlet-handler/>
+
+    <!-- 静态资源访问 -->
+    <mvc:resources mapping="/static/**" location="/static/"/>
+
+    <mvc:annotation-driven>
+        <!-- 开启注解映射 -->
+        <mvc:message-converters register-defaults="true">
+            <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json</value>
+                    </list>
+                </property>
+                <property name="features">
+                    <list>
+                        <value>PrettyFormat</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <!-- 拦截器 -->
+    <!--	<mvc:interceptors>
+          <mvc:interceptor>
+              <mvc:mapping path="/**"/>
+              <mvc:exclude-mapping path="/static/**"/>
+          </mvc:interceptor>
+     </mvc:interceptors>-->
+
+    <!-- 异常处理 -->
+    <bean id="exceptionHandler" class="com.taoyuanx.mvcseed.exception.SystemExceptionHandler"/>
+
+    <!-- jsp 视图解析 -->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+
+        <property name="prefix" value="/WEB-INF/pages/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+    <!-- 上传 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="utf-8"/>
+        <property name="maxUploadSize" value="10485760000"/>
+        <property name="maxInMemorySize" value="40960"/>
+    </bean>
+
+</beans>
