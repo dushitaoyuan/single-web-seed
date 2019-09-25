@@ -5,8 +5,6 @@ import org.apache.commons.codec.binary.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -37,7 +35,7 @@ public class AesUtil {
      * @throws Exception
      */
     public static byte[] encrypt(byte[] data, String password) throws Exception {
-        Cipher cipher = doGetAesCipher(password, Cipher.ENCRYPT_MODE);
+        Cipher cipher = AesHelper.getAesCipher(iv, password.getBytes(), Cipher.ENCRYPT_MODE, CIPHER_MODE);
         byte[] result = cipher.doFinal(data);
         return result;
     }
@@ -51,7 +49,7 @@ public class AesUtil {
      * @retu
      */
     public static byte[] decrypt(byte[] data, String password) throws Exception {
-        Cipher cipher = doGetAesCipher(password, Cipher.DECRYPT_MODE);
+        Cipher cipher = AesHelper.getAesCipher(iv, password.getBytes(), Cipher.DECRYPT_MODE, CIPHER_MODE);
         byte[] result = cipher.doFinal(data);
         return result;
     }
@@ -90,7 +88,8 @@ public class AesUtil {
 
     public static void encryptInputStream(InputStream inputStream, String password, OutputStream out) throws Exception {
         try {
-            Cipher cipher = doGetAesCipher(password, Cipher.ENCRYPT_MODE);
+            Cipher cipher = AesHelper.getAesCipher(iv, password.getBytes(), Cipher.ENCRYPT_MODE, CIPHER_MODE);
+
             CipherInputStream cipherInputStream = new CipherInputStream(inputStream, cipher);
             byte[] buf = new byte[BUFF_SIZE];
             int len = -1;
@@ -117,7 +116,7 @@ public class AesUtil {
             if (inputStream == null) {
                 return null;
             }
-            Cipher cipher = doGetAesCipher(password, Cipher.ENCRYPT_MODE);
+            Cipher cipher = AesHelper.getAesCipher(iv, password.getBytes(), Cipher.ENCRYPT_MODE, CIPHER_MODE);
             CipherInputStream cipherInputStream = new CipherInputStream(inputStream, cipher);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             byte[] buf = new byte[BUFF_SIZE];
@@ -136,7 +135,7 @@ public class AesUtil {
 
     public static void decryptInputStream(InputStream inputStream, String password, OutputStream out) throws Exception {
         try {
-            Cipher cipher = doGetAesCipher(password, Cipher.DECRYPT_MODE);
+            Cipher cipher = AesHelper.getAesCipher(iv, password.getBytes(), Cipher.DECRYPT_MODE, CIPHER_MODE);
             CipherOutputStream cipherOutputStream = new CipherOutputStream(out, cipher);
             byte[] buf = new byte[BUFF_SIZE];
             int len = -1;
@@ -150,23 +149,6 @@ public class AesUtil {
         } catch (Exception e) {
             throw e;
         }
-    }
-
-    /**
-     * 密码位数 支持，16，24，32 分别对应 aes 128，192，256
-     * @param password
-     * @param mode
-     * @return
-     * @throws Exception
-     */
-    private static Cipher doGetAesCipher(String password, int mode) throws Exception {
-        //创建aes格式的密码
-        SecretKeySpec key = new SecretKeySpec(password.getBytes(), "AES");
-        //设置加密模式
-        Cipher cipher = Cipher.getInstance(CIPHER_MODE);
-        //设置初始向量和mode
-        cipher.init(mode, key, new IvParameterSpec(iv));
-        return cipher;
     }
 
 

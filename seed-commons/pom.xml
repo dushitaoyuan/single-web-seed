@@ -72,6 +72,13 @@
             <groupId>com.vip.vjtools</groupId>
             <artifactId>vjkit</artifactId>
         </dependency>
+
+
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.4.6</version>
+        </dependency>
     </dependencies>
 
 </project>
