@@ -3,9 +3,13 @@
 <configuration>
 
     <typeAliases>
+        <typeAlias type="com.taoyuanx.commons.mybatis.encrypt.Encode" alias="Encode"/>
         <package name="com.taoyuanx.DO"/>
     </typeAliases>
-    <mappers>
-    </mappers>
+
+    <typeHandlers>
+        <typeHandler handler="com.taoyuanx.commons.mybatis.encrypt.EncodeAliasTypeHandlerextends" javaType="Encode"
+                     jdbcType="VARCHAR"/>
+    </typeHandlers>
 
 </configuration>

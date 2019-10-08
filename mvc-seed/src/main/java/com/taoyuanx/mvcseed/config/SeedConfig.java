@@ -2,6 +2,9 @@ package com.taoyuanx.mvcseed.config;
 
 import com.taoyuanx.commons.api.Result;
 import com.taoyuanx.commons.api.ResultBuilder;
+import com.taoyuanx.commons.utils.PropertiesUtil;
+import com.taoyuanx.commons.utils.SpringContextUtil;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -18,7 +21,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @desc: 系统代码配置
  */
 @Configuration
-public class SeedConfig {
+public class SeedConfig   {
+
     /**
      * 统一结果处理
      */
@@ -42,4 +46,6 @@ public class SeedConfig {
         }
 
     }
+
+
 }

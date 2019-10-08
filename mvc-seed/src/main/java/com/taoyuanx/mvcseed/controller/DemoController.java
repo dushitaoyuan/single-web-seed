@@ -3,8 +3,8 @@ package com.taoyuanx.mvcseed.controller;
 import com.taoyuanx.commons.utils.PropertiesUtil;
 import com.taoyuanx.mvcseed.DTO.UserDTO;
 import com.taoyuanx.mvcseed.service.UserService;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +22,7 @@ import java.util.Map;
 public class DemoController {
     @Autowired
     UserService userService;
+
     @RequestMapping(value = "sayHello")
     @ResponseBody
     public Map<String, Object> hello() {
@@ -33,7 +34,14 @@ public class DemoController {
     @RequestMapping(value = "user/get")
     @ResponseBody
     public UserDTO getUser(Long userId) {
-        UserDTO userDTO=userService.getById(userId);
+        UserDTO userDTO = userService.getById(userId);
         return userDTO;
+    }
+
+    @RequestMapping(value = "user/add")
+    @ResponseBody
+    public Long add(@RequestBody UserDTO userDTO) {
+        userService.save(userDTO);
+        return userDTO.getId();
     }
 }

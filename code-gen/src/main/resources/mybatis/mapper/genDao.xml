@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taoyuanx.codegen.dao.GenDao">
+    <resultMap id="tableMap" type="com.taoyuanx.codegen.domain.TableComment">
+        <result property="tableCommnet" column="table_comment"/>
+        <result property="tableName" column="table_name"/>
+        <result property="engine" column="ENGINE"/>
+        <result property="tableRows" column="table_rows"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap id="columnMap" type="com.taoyuanx.codegen.domain.TableColumn">
+        <result property="columnName" column="column_name"/>
+        <result property="columnComment" column="column_comment"/>
+        <result property="columnType" column="column_type"/>
+        <result property="columnKey" column="column_key"/>
+    </resultMap>
+
+
+
+    <select id="listTables" resultMap="tableMap">
+SELECT
+  `table_name`,
+  table_comment,
+   `ENGINE`,
+  table_rows,
+  create_time,
+    update_time
+FROM
+  information_schema.tables
+WHERE table_schema = #{tableSchema}
+    </select>
+    <select id="listColumn" resultMap="columnMap">
+        SELECT
+  `column_name`,
+  column_comment,
+  column_type,
+  column_key
+FROM
+  information_schema.columns
+WHERE table_schema = #{tableSchema}
+  AND table_name = #{tableName}
+    </select>
+    <select id="getTable" resultMap="tableMap">
+SELECT
+  `table_name`,
+  table_comment
+FROM
+  information_schema.tables
+WHERE table_schema = #{tableSchema}   AND table_name = #{tableName}
+    </select>
+    <select id="listAllTableSchema" resultType="com.taoyuanx.codegen.domain.TableSchema">
+            SELECT schema_name name,DEFAULT_CHARACTER_SET_NAME charset FROM information_schema.SCHEMATA
+
+    </select>
+    <select id="getByKey" resultType="com.taoyuanx.codegen.domain.GenConfig">
+        select config_key configKey,config_value configValue,`type` from gen_config where config_key = #{configKey} and `type`=#{configType}
+    </select>
+
+
+    <update id="saveOrUpdateGenConfig" parameterType="com.taoyuanx.codegen.domain.GenConfig">
+        INSERT INTO gen_config(config_key,config_value,`type`) VALUES (#{configKey},#{configValue},#{type}) ON DUPLICATE KEY UPDATE config_value=VALUES(config_value),`type`=VALUES(`type`)
+    </update>
+</mapper>

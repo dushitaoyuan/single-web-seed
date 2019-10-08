@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties>
+        <property name="db.encode.password" value="1234567812345678"/>
+        <property name="db.encode.iv" value="0000000000000000"/>
+        <property name="db.encode.tag" value="true"/>
+    </properties>
+    <typeAliases>
+        <typeAlias type="com.taoyuanx.commons.mybatis.encrypt.Encode" alias="Encode"/>
+        <package name="com.taoyuanx.DO"/>
+    </typeAliases>
+
+    <typeHandlers>
+        <typeHandler handler="com.taoyuanx.commons.mybatis.encrypt.EncodeAliasTypeHandlerextends" javaType="Encode" />
+       <!-- <typeHandler handler="com.taoyuanx.commons.mybatis.encrypt.EncodeAliasTypeHandlerextends" javaType="String" jdbcType="VARCHAR"/>-->
+    </typeHandlers>
+
+</configuration>

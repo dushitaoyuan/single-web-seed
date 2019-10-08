@@ -12,7 +12,7 @@ import java.util.List;
  * 暴露工具类,使用时
  */
 public class CBeanMapper {
-    private static Mapper mapper = new DozerBeanMapper(Lists.newArrayList("dozer.xml"));
+    private static Mapper mapper = new DozerBeanMapper();
 
     public static <S, D> D map(S source, Class<D> destinationClass) {
         return mapper.map(source, destinationClass);

@@ -1,5 +1,7 @@
 package com.taoyuanx.mvcseed.service.impl;
 import com.taoyuanx.commons.bean.CBeanMapper;
+import com.taoyuanx.commons.utils.IdGenUtil;
+import com.taoyuanx.commons.utils.PasswordUtil;
 import com.taoyuanx.mvcseed.DO.UserDO;
 import com.taoyuanx.mvcseed.DTO.UserDTO;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,14 @@ public class UserServiceImpl implements UserService{
             return  CBeanMapper.map(userDO,UserDTO.class);
         }
         return null;
+    }
+
+
+    @Override
+    public void save(UserDTO userDTO) {
+        userDTO.setId( IdGenUtil.genId());
+        userDTO.setPassword(PasswordUtil.passwordEncode(userDTO.getPassword()));
+        userDao.insertSelective(userDTO);
     }
 }
 
