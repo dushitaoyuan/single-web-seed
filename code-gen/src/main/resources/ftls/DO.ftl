@@ -1,22 +1,25 @@
-package ${table.packageName};
+package ${entityFinalPackage};
 
-import ${table.entityName};
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-<#if table.imports??>
-<#list table.imports as item>
-import ${item};
-</#list>
-</#if>
+<#if table.imports??><#list table.imports as item>import ${item};</#list></#if>
+
+/**
+*
+*  @date: ${date}
+*  @desc: ${table.entityComment!}
+*/
 @Data
-public class ${table.entityName}{
+@TableName("${table.tableName}")
+public class ${entityFinalName}{
 <#list table.entityFields as field>
     <#if field.fieldComment??>
         /*
-         * ${field.fieldComment}
-         */
+        * ${field.fieldComment}
+        */
     </#if>
     <#if field.isKey??>
         @TableId("${field.columnName}")

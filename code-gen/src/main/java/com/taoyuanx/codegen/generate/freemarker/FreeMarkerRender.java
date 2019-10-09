@@ -1,5 +1,6 @@
-package com.taoyuanx.codegen.generate;
+package com.taoyuanx.codegen.generate.freemarker;
 
+import com.taoyuanx.codegen.generate.IRender;
 import freemarker.cache.FileTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;

@@ -1,13 +1,12 @@
-package ${package};
+package ${mapperFinalPackage};
 
-import ${tableClass.fullClassName};
+import ${entityFullName};
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
-* 通用 Mapper 代码生成器
-*
-* @author mapper-generator
+*  @date: ${date}
 */
-public interface ${tableClass.shortClassName}${mapperSuffix} extends ${baseMapper!"tk.mybatis.mapper.common.Mapper"}<${tableClass.shortClassName}> {
+public interface ${mapperFinalName} extends BaseMapper<${entityFinalName}> {
 
 }
 

@@ -1,11 +1,13 @@
-package ${package};
+package ${dtoFinalPackage};
 
-<#assign  name="${tableClass.shortClassName?substring(0,tableClass.shortClassName?lastIndexOf('DO'))}" >
-import ${tableClass.fullClassName};
-
+import ${entityFullName};
 import lombok.Data;
+/**
+*
+*  @date: ${date}
+*/
 @Data
-public class ${name}${mapperSuffix} extends ${tableClass.shortClassName} {
+public class ${dtoFinalName} extends ${entityFinalName}{
 
 }
 

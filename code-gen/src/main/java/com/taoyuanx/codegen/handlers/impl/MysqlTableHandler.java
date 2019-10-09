@@ -81,13 +81,15 @@ public class MysqlTableHandler implements ITableHandler {
                 field.setJavaType(type.getSimpleName());
                 field.setFullJavaType(fullJavaType);
                 field.setJavaClass(type);
-                autoImport(fullJavaType,tableInfo);
+                field.setJdbcType(GenUtil.jdbcType(tableColumn.getColumnType()));
+                autoImport(fullJavaType, tableInfo);
 
                 String fieldComment = explainName(ConfigType.FIELDCOMMENT, joiner.join(new String[]{keyPrefix, tableColumn.getColumnName(), ConfigType.FIELDCOMMENT.key}),
                         tableColumn.getColumnComment(), tableSchema, tableName);
                 field.setFieldComment(fieldComment);
                 if (!StringUtils.isEmpty(tableColumn.getColumnKey())) {
                     field.setIsKey(true);
+                    tableInfo.setPriKey(field);
                 }
                 fieldList.add(field);
             }
@@ -127,13 +129,15 @@ public class MysqlTableHandler implements ITableHandler {
     }
 
     private void autoImport(String fullType, TableInfo tableInfo) {
-        if (StringUtils.hasText(fullType) && !fullType.contains("java.lang.")) {
+        if (StringUtils.hasText(fullType) && !fullType.startsWith("java.lang.")) {
             List<String> imports = tableInfo.getImports();
             if (Objects.isNull(imports)) {
-                imports = new ArrayList<>();
-                tableInfo.setImports(imports);
+                tableInfo.setImports(new ArrayList<>());
             }
-            tableInfo.getImports().add(fullType);
+            imports = tableInfo.getImports();
+            if (!imports.contains(fullType)) {
+                imports.add(fullType);
+            }
 
         }
     }

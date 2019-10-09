@@ -1,7 +1,7 @@
 package com.taoyuanx.codegen.config;
 
 import com.taoyuanx.codegen.exception.SystemExceptionHandler;
-import com.taoyuanx.codegen.generate.FreeMarkerRender;
+import com.taoyuanx.codegen.generate.freemarker.FreeMarkerRender;
 import com.taoyuanx.codegen.generate.IRender;
 import com.taoyuanx.commons.api.Result;
 import com.taoyuanx.commons.api.ResultBuilder;
@@ -16,13 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author dushitaoyuan

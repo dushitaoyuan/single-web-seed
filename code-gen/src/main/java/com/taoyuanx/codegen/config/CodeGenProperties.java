@@ -36,6 +36,10 @@ public class CodeGenProperties {
     private String mapperSuffix = "Dao";
     private String mapperPackage = "dao";
 
+
+    private String mapperXmlSuffix = "Dao";
+    private String mapperXmlPackage = "src/main/resources/mapper";
+
     private String serviceSuffix = "Service";
     private String servicePackage = "service";
 
@@ -44,4 +48,6 @@ public class CodeGenProperties {
     private String serviceImplPackage = "service.impl";
 
     private String controllerPackage = "controller";
+
+    private String controllerSuffix = "Controller";
 }

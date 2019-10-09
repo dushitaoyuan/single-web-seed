@@ -2,11 +2,8 @@ package com.taoyuanx.mvcseed;
 
 import com.alibaba.fastjson.JSON;
 import com.taoyuanx.codegen.CodeGenBootApplication;
-import com.taoyuanx.codegen.config.CodeGenProperties;
 import com.taoyuanx.codegen.dao.GenDao;
-import com.taoyuanx.codegen.domain.TableColumn;
-import com.taoyuanx.codegen.domain.TableComment;
-import com.taoyuanx.codegen.generate.IRender;
+import com.taoyuanx.codegen.generate.CodeGenCommonService;
 import com.taoyuanx.codegen.handlers.ITableHandler;
 import com.taoyuanx.codegen.model.TableInfo;
 import org.junit.Test;
@@ -16,10 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author dushitaoyuan
@@ -35,26 +28,18 @@ public class GenDaoTest {
     ITableHandler tableHandler;
 
     @Autowired
-    CodeGenProperties codeGenProperties;
-    @Autowired
-    IRender iRender;
-
+    CodeGenCommonService codeGenCommonService;
 
     @Test
-    public void tableHandlerTest(){
-        TableInfo explain = tableHandler.explain("xa", "user");
+    public void tableHandlerTest() {
+        TableInfo explain = tableHandler.explain("study", "user");
         System.out.println(JSON.toJSONString(explain));
     }
 
 
     @Test
     public void genTest() throws FileNotFoundException {
-        TableInfo explain = tableHandler.explain("xa", "user");
-        Map<String,Object> rendreData=new HashMap<>();
-        rendreData.put("table",explain);
-        rendreData.put("config",codeGenProperties);
-        iRender.render("DO.ftl",rendreData,new FileOutputStream("111.java"));
-
+        codeGenCommonService.generate(null, "study", "user");
     }
 
 

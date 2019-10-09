@@ -109,12 +109,19 @@
 
     table.on('toolbar(table_info)', function (obj) {
         var checkStatus = table.checkStatus(obj.config.id);
-        switch (obj.event) {
-            case 'codeGen':
-                var data = checkStatus.data;
-                layer.alert(JSON.stringify(data));
-                break;
+        if(obj.event==='codeGen'){
+            $.ajax({
+                type: "GET",
+                url: "/gen/gen",
+                data: {
+                    tableName: choseTable,
+                    db: choseDb
+                }, success: function (result) {
+
+                }
+            });
         }
+
     });
     table.on('tool(table_info)', function (obj) {
         var data = obj.data;

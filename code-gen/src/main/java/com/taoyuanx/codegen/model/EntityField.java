@@ -29,7 +29,10 @@ public class EntityField {
      * java类型
      */
     private String javaType;
-
+    /**
+     * jdbcType
+     */
+    private String jdbcType;
     /**
      * 列类型
      */

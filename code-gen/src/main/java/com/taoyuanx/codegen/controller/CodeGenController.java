@@ -3,7 +3,7 @@ package com.taoyuanx.codegen.controller;
 import com.taoyuanx.codegen.domain.GenConfig;
 import com.taoyuanx.codegen.domain.TableComment;
 import com.taoyuanx.codegen.domain.TableSchema;
-import com.taoyuanx.codegen.exception.ServiceException;
+import com.taoyuanx.codegen.generate.CodeGenCommonService;
 import com.taoyuanx.codegen.handlers.ITableHandler;
 import com.taoyuanx.codegen.model.PageResult;
 import com.taoyuanx.codegen.model.TableInfo;
@@ -27,6 +27,8 @@ public class CodeGenController {
     ITableHandler tableHandler;
     @Autowired
     GenService genService;
+    @Autowired
+    CodeGenCommonService codeGenCommonService;
 
 
     @GetMapping("table")
@@ -38,30 +40,31 @@ public class CodeGenController {
 
     @GetMapping("gen")
     public void gen(@RequestParam("tableName") String tableName, @RequestParam(required = false) String db) {
-
+        String tableSchema = db == null ? PropertiesUtil.getSystemProperty("code.gen.tableSchema") : db;
+        codeGenCommonService.generate(null, db, tableName);
     }
 
     @PostMapping("config")
     @ResponseBody
     public Result saveTableConfig(GenConfig genConfig) {
-         genService.saveConfig(genConfig);
-         return ResultBuilder.success();
+        genService.saveConfig(genConfig);
+        return ResultBuilder.success();
     }
 
     @GetMapping("listTable")
     @ResponseBody
     public PageResult<TableComment> listTable(@RequestParam(required = false) String db,
-    @RequestParam(required = false,defaultValue = "10") Integer pageSize,
-                                              @RequestParam(required = false,defaultValue = "1")Integer pageNum) {
+                                              @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+                                              @RequestParam(required = false, defaultValue = "1") Integer pageNum) {
         String tableSchema = db == null ? PropertiesUtil.getSystemProperty("code.gen.tableSchema") : db;
-        return genService.listAllTable(tableSchema,pageSize,pageNum);
+        return genService.listAllTable(tableSchema, pageSize, pageNum);
     }
 
 
     @GetMapping("listSchema")
     @ResponseBody
-    public PageResult<TableSchema> listSchema(@RequestParam(required = false,defaultValue = "10") Integer pageSize,
-                                              @RequestParam(required = false,defaultValue = "1")Integer pageNum) {
+    public PageResult<TableSchema> listSchema(@RequestParam(required = false, defaultValue = "10") Integer pageSize,
+                                              @RequestParam(required = false, defaultValue = "1") Integer pageNum) {
         return genService.listSchema(pageSize, pageNum);
     }
 }
