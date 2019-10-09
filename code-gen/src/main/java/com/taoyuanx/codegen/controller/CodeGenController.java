@@ -15,6 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+
 /**
  * @author dushitaoyuan
  * @date 2019/9/2822:10
@@ -39,9 +50,21 @@ public class CodeGenController {
     }
 
     @GetMapping("gen")
-    public void gen(@RequestParam("tableName") String tableName, @RequestParam(required = false) String db) {
+    public void gen(@RequestParam("tableName") String tableName, @RequestParam(required = false) String db,
+                    HttpServletResponse response, HttpServletRequest request) throws Exception {
         String tableSchema = db == null ? PropertiesUtil.getSystemProperty("code.gen.tableSchema") : db;
-        codeGenCommonService.generate(null, db, tableName);
+        File file = codeGenCommonService.generate(null, db, tableName);
+
+        response.setContentType(request.getServletContext().getMimeType(file.getName()));
+        response.setHeader("Content-type", "application/octet-stream");
+        response.setHeader("Content-Disposition",
+                "attachment;fileName=" + URLEncoder.encode(file.getName(), "UTF-8"));
+        response.setContentType(request.getServletContext().getMimeType(file.getName()));
+        ServletOutputStream out = response.getOutputStream();
+        handle(out,file);
+        out.flush();
+        file.delete();
+        return;
     }
 
     @PostMapping("config")
@@ -66,5 +89,18 @@ public class CodeGenController {
     public PageResult<TableSchema> listSchema(@RequestParam(required = false, defaultValue = "10") Integer pageSize,
                                               @RequestParam(required = false, defaultValue = "1") Integer pageNum) {
         return genService.listSchema(pageSize, pageNum);
+    }
+    private Integer buffSize = 4 << 20;
+    private void handle(OutputStream out, File localFile) throws Exception {
+        FileChannel channel = new FileInputStream(localFile).getChannel();
+        ByteBuffer buffer = ByteBuffer.allocate(buffSize);
+        int len = 0;
+        while ((len = channel.read(buffer)) > 0) {
+            buffer.flip();
+            out.write(buffer.array(), 0, len);
+            buffer.clear();
+        }
+        channel.close();
+
     }
 }

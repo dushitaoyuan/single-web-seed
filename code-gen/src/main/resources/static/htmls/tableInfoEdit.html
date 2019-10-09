@@ -50,13 +50,6 @@
         </div>
     </div>
 
-    <div class="layui-form-item">
-        <label class="layui-form-label">实体后缀</label>
-        <div class="layui-input-block">
-            <textarea placeholder="实体后缀" name="entitySuffix" class="layui-textarea" onchange="changeConfig('entitySuffix',this.value,5)"></textarea>
-        </div>
-    </div>
-
 </form>
 
 <table class="layui-hide" id="table_info" lay-filter="table_info">
@@ -109,7 +102,8 @@
 
     table.on('toolbar(table_info)', function (obj) {
         var checkStatus = table.checkStatus(obj.config.id);
-        if(obj.event==='codeGen'){
+        window.location.href="/gen/gen?tableName="+choseTable+"&db="+choseDb;
+      /*  if(obj.event==='codeGen'){
             $.ajax({
                 type: "GET",
                 url: "/gen/gen",
@@ -120,7 +114,7 @@
 
                 }
             });
-        }
+        }*/
 
     });
     table.on('tool(table_info)', function (obj) {

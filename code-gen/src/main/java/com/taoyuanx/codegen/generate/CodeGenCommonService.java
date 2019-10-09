@@ -5,6 +5,7 @@ import com.taoyuanx.codegen.config.CodeGenProperties;
 import com.taoyuanx.codegen.handlers.ITableHandler;
 import com.taoyuanx.codegen.model.TableInfo;
 import com.taoyuanx.codegen.utils.GenUtil;
+import com.vip.vjtools.vjkit.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,7 +35,7 @@ public class CodeGenCommonService {
     @Autowired
     CodeGenProperties codeGenProperties;
 
-    public void generate(Map<String, Object> extData, String tableSchema, String tableName) {
+    public File generate(Map<String, Object> extData, String tableSchema, String tableName) throws Exception {
         String uuid= UUID.randomUUID().toString().replace("-","");
         File baseDir=new File(codeGenProperties.getTemplateOutDir(),uuid);
 
@@ -132,21 +134,19 @@ public class CodeGenCommonService {
 
         fileName = iRender.render("controller", "${controllerFullName}.java", rendreData);
         doGenerate(baseDir,"controller.ftl", fileName, rendreData);
-        File file = new File(codeGenProperties.getTemplateOutDir(), uuid + ".zip");
-        ZipUtil.zip(baseDir,file);
-
+        File zip = ZipUtil.zip(baseDir);
+        FileUtil.deleteDir(baseDir);
+        return  zip;
     }
 
 
     private void doGenerate(File baseDir,String templatePath, String outPath, Map<String, Object> rendreData) {
-        /**
-         * entity
-         */
         try {
             outPath = GenUtil.changePackageToFilePath(outPath);
             File file = new File(baseDir,outPath);
             GenUtil.forceMakeDirs(file);
             iRender.render(templatePath, rendreData, new FileOutputStream(file));
+            log.info("模板{} 代码生成结束",templatePath);
         } catch (Exception e) {
             log.error("{}模板生成异常,{}", templatePath, e);
         }
