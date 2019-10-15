@@ -51,6 +51,7 @@ public class FreeMarkerRender implements IRender {
             Template tp = configuration.getTemplate(templatePath);
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
             tp.process(renderData, outputStreamWriter);
+            outputStreamWriter.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

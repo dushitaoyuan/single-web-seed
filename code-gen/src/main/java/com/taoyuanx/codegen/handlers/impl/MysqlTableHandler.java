@@ -1,5 +1,7 @@
 package com.taoyuanx.codegen.handlers.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.base.Joiner;
 import com.taoyuanx.codegen.config.CodeGenProperties;
 import com.taoyuanx.codegen.dao.GenDao;
@@ -13,11 +15,12 @@ import com.taoyuanx.codegen.model.TableInfo;
 import com.taoyuanx.codegen.utils.GenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author dushitaoyuan
@@ -29,9 +32,13 @@ import java.util.*;
 public class MysqlTableHandler implements ITableHandler {
     @Autowired
     GenDao genDao;
+    
+
     @Autowired
     CodeGenProperties codeGenProperties;
-
+    @Autowired
+    @Qualifier("genConfigCache")
+    LoadingCache<String, GenConfig> genConfigCache;
     @Override
     public TableInfo explain(String tableSchema, String tableName) {
         Joiner joiner = Joiner.on(".");
@@ -56,15 +63,35 @@ public class MysqlTableHandler implements ITableHandler {
         String entityComment = explainName(ConfigType.ENTITYCOMMENT, joiner.join(new String[]{keyPrefix, ConfigType.ENTITYCOMMENT.key}),
                 table.getTableCommnet(), tableSchema, tableName);
         tableInfo.setEntityComment(entityComment);
-        if (!CollectionUtils.isEmpty(tableColumns)) {
+        if (CollectionUtil.isNotEmpty(tableColumns)) {
+            String globalConfigKeyLike=tableSchema+"."+ConfigType.GLOBAL_CONFIG.key+"%";
+            List<GenConfig> allGlobalConfig = genDao.getAllConfig(globalConfigKeyLike, ConfigType.GLOBAL_CONFIG.code);
+            boolean hasGlobal= CollectionUtil.isNotEmpty(allGlobalConfig);
+            Map<String, List<GenConfig>> globalConfigMap = null;
+            if(hasGlobal){
+                globalConfigMap=allGlobalConfig.stream().collect(Collectors.groupingBy(GenConfig::getConfigKey));
+            }
             List<EntityField> fieldList = new ArrayList<>(tableColumns.size());
             ListIterator<TableColumn> tableColumnListIterator = tableColumns.listIterator();
             while (tableColumnListIterator.hasNext()) {
                 TableColumn tableColumn = tableColumnListIterator.next();
                 EntityField field = new EntityField();
                 field.setColumnName(tableColumn.getColumnName());
-                String fieldName = explainName(ConfigType.FIELDNAME, joiner.join(new String[]{keyPrefix, tableColumn.getColumnName()}),
-                        tableColumn.getColumnName(), tableSchema, tableName);
+                String fieldName = null;
+
+                if(hasGlobal){
+                    String globalColumnNameKey=joiner.join(new String[]{tableSchema,ConfigType.GLOBAL_CONFIG.key, tableColumn.getColumnName()});
+                    GenConfig globalColumnNameConfig = getGlobalConfig(globalColumnNameKey, globalConfigMap);
+                    if(Objects.nonNull(globalColumnNameConfig)){
+                        fieldName=globalColumnNameConfig.getConfigValue();
+                    }else {
+                        fieldName = explainName(ConfigType.FIELDNAME, joiner.join(new String[]{keyPrefix, tableColumn.getColumnName()}),
+                                tableColumn.getColumnName(), tableSchema, tableName);
+                    }
+                }else {
+                    fieldName = explainName(ConfigType.FIELDNAME, joiner.join(new String[]{keyPrefix, tableColumn.getColumnName()}),
+                            tableColumn.getColumnName(), tableSchema, tableName);
+                }
                 field.setFieldName(fieldName);
                 field.setColumnType(tableColumn.getColumnType());
                 Class type = GenUtil.type(tableColumn.getColumnType());
@@ -83,7 +110,6 @@ public class MysqlTableHandler implements ITableHandler {
                 field.setJavaClass(type);
                 field.setJdbcType(GenUtil.jdbcType(tableColumn.getColumnType()));
                 autoImport(fullJavaType, tableInfo);
-
                 String fieldComment = explainName(ConfigType.FIELDCOMMENT, joiner.join(new String[]{keyPrefix, tableColumn.getColumnName(), ConfigType.FIELDCOMMENT.key}),
                         tableColumn.getColumnComment(), tableSchema, tableName);
                 field.setFieldComment(fieldComment);
@@ -99,7 +125,7 @@ public class MysqlTableHandler implements ITableHandler {
     }
 
     private String explainName(ConfigType configType, String key, String value, String tableSchema, String tableName) {
-        Optional<GenConfig> tableConfigValue = getTableConfigValue(configType, key);
+        Optional<GenConfig> tableConfigValue = Optional.ofNullable(genConfigCache.get(key));
         if (tableConfigValue.isPresent()) {
             return tableConfigValue.get().getConfigValue();
         }
@@ -124,9 +150,7 @@ public class MysqlTableHandler implements ITableHandler {
     }
 
 
-    private Optional<GenConfig> getTableConfigValue(ConfigType configType, String key) {
-        return Optional.ofNullable(genDao.getByKey(key, configType.code));
-    }
+   
 
     private void autoImport(String fullType, TableInfo tableInfo) {
         if (StringUtils.hasText(fullType) && !fullType.startsWith("java.lang.")) {
@@ -140,5 +164,13 @@ public class MysqlTableHandler implements ITableHandler {
             }
 
         }
+    }
+
+    private  GenConfig getGlobalConfig(String globalColumnNameKey, Map<String, List<GenConfig>> globalConfigMap){
+        List<GenConfig> genConfigList = globalConfigMap.get(globalColumnNameKey);
+        if(CollectionUtil.isNotEmpty(genConfigList)){
+            return  genConfigList.get(0);
+        }
+        return null;
     }
 }

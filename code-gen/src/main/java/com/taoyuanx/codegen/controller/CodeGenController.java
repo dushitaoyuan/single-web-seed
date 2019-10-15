@@ -74,6 +74,24 @@ public class CodeGenController {
         return ResultBuilder.success();
     }
 
+    @DeleteMapping("config/delete")
+    @ResponseBody
+    public Result delete(String configKey) {
+        genService.deleteConfig(configKey);
+        return ResultBuilder.success();
+    }
+
+    @GetMapping("global")
+    @ResponseBody
+    public PageResult<GenConfig> global(@RequestParam(required = false) String db,
+                                              @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+                                              @RequestParam(required = false, defaultValue = "1") Integer pageNum) {
+        String tableSchema = db == null ? PropertiesUtil.getSystemProperty("code.gen.tableSchema") : db;
+        return genService.globalConfig(tableSchema, pageSize, pageNum);
+    }
+
+
+
     @GetMapping("listTable")
     @ResponseBody
     public PageResult<TableComment> listTable(@RequestParam(required = false) String db,

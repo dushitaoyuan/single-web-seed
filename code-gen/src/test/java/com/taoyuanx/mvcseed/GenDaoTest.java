@@ -38,7 +38,7 @@ public class GenDaoTest {
 
 
     @Test
-    public void genTest() throws FileNotFoundException {
+    public void genTest() throws Exception {
         codeGenCommonService.generate(null, "study", "user");
     }
 

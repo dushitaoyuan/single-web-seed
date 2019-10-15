@@ -6,6 +6,7 @@ import com.taoyuanx.codegen.dao.GenDao;
 import com.taoyuanx.codegen.domain.GenConfig;
 import com.taoyuanx.codegen.domain.TableComment;
 import com.taoyuanx.codegen.domain.TableSchema;
+import com.taoyuanx.codegen.enums.ConfigType;
 import com.taoyuanx.codegen.model.PageResult;
 import com.taoyuanx.codegen.model.TableInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +38,17 @@ public class GenService {
 
     public void saveConfig(GenConfig genConfig) {
         genDao.saveOrUpdateGenConfig(genConfig);
+    }
+
+    public PageResult<GenConfig> globalConfig(String tableSchema, Integer pageSize, Integer pageNum) {
+        PageHelper.startPage(pageNum, pageSize);
+        String configKey=tableSchema+"."+ ConfigType.GLOBAL_CONFIG.key+"."+"%";
+        Integer globalConfigType=ConfigType.GLOBAL_CONFIG.code;
+        List<GenConfig> genConfigList = genDao.getAllConfig(configKey,globalConfigType);
+        return PageResult.change((Page) genConfigList);
+    }
+
+    public void deleteConfig(String key) {
+        genDao.delete(key);
     }
 }

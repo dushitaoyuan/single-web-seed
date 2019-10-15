@@ -18,7 +18,6 @@
     </resultMap>
 
 
-
     <select id="listTables" resultMap="tableMap">
 SELECT
   `table_name`,
@@ -55,11 +54,25 @@ WHERE table_schema = #{tableSchema}   AND table_name = #{tableName}
 
     </select>
     <select id="getByKey" resultType="com.taoyuanx.codegen.domain.GenConfig">
-        select config_key configKey,config_value configValue,`type` from gen_config where config_key = #{configKey} and `type`=#{configType}
+        select config_key configKey,config_value configValue,`type` from gen_config where config_key = #{configKey}
+        <if test="configType !=null">
+            and `type`=#{configType}
+        </if>
+    </select>
+    <select id="getAllConfig" resultType="com.taoyuanx.codegen.domain.GenConfig">
+        select config_key configKey,config_value configValue,`type` from gen_config where config_key like #{configKey}
+        <if test="configType !=null">
+            and `type`=#{configType}
+        </if>
     </select>
 
 
     <update id="saveOrUpdateGenConfig" parameterType="com.taoyuanx.codegen.domain.GenConfig">
         INSERT INTO gen_config(config_key,config_value,`type`) VALUES (#{configKey},#{configValue},#{type}) ON DUPLICATE KEY UPDATE config_value=VALUES(config_value),`type`=VALUES(`type`)
     </update>
+
+
+    <delete id="delete">
+        delete from gen_config where  config_key=#{configKey}
+    </delete>
 </mapper>

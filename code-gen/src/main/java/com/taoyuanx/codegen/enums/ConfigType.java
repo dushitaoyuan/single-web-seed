@@ -15,7 +15,9 @@ public enum ConfigType {
     ENTITYCOMMENT(5, "实体注释","entityComment"),
 
     MODULENAME(6, "模块名","moduleName"),
-    PARENTPACKAGENAME(7, "父包名","parentPackageName");
+    PARENTPACKAGENAME(7, "父包名","parentPackageName"),
+
+    GLOBAL_CONFIG(8, "全局配置","global.columnName");
 
     public int code;
     public String desc;

@@ -43,4 +43,16 @@ public interface GenDao {
     void saveOrUpdateGenConfig(GenConfig genConfig);
 
     GenConfig getByKey(@Param("configKey")String configKey,@Param("configType")Integer configType);
+
+    /**
+     * 获取所有配置
+     * @return
+     */
+    List<GenConfig> getAllConfig(@Param("configKey")String configKey,@Param("configType")Integer configType);
+
+    /**
+     * 删除配置
+     * @param key
+     */
+    void delete(@Param("configKey")String key);
 }

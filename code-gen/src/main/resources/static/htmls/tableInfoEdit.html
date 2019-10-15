@@ -103,19 +103,6 @@
     table.on('toolbar(table_info)', function (obj) {
         var checkStatus = table.checkStatus(obj.config.id);
         window.location.href="/gen/gen?tableName="+choseTable+"&db="+choseDb;
-      /*  if(obj.event==='codeGen'){
-            $.ajax({
-                type: "GET",
-                url: "/gen/gen",
-                data: {
-                    tableName: choseTable,
-                    db: choseDb
-                }, success: function (result) {
-
-                }
-            });
-        }*/
-
     });
     table.on('tool(table_info)', function (obj) {
         var data = obj.data;

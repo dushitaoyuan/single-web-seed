@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>表</title>
+
+    <link rel="stylesheet" href="/layui/css/layui.css"/>
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend id="table-title"></legend>
+</fieldset>
+
+<form class="layui-form">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">列名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="columnName" autocomplete="off" lay-verify="required" lay-reqtext="不可为空"
+                       placeholder="列名称" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">字段名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="fieldName" autocomplete="off" placeholder="字段名称" lay-verify="required"
+                       lay-reqtext="不可为空" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <button type="button" class="layui-btn" onclick="newGlobalConfig()"> 新增配置</button>
+
+</form>
+<table class="layui-hide" id="table_info" lay-data="{id: 'table_info'}" lay-filter="table_info">
+
+</table>
+<script type="text/html" id="bar">
+    <a class="layui-btn layui-btn-xs" lay-event="delete">删除</a>
+</script>
+
+
+<script src="/layui/layui.all.js"></script>
+<script src="/js/jquery-3.4.1.js"></script>
+<script type="text/javascript">
+    var table = layui.table;
+    var choseDb = localStorage.getItem("tableSchema");
+    $("#table-title").html(choseDb);
+    table.render({
+        elem: '#table_info'
+        , url: '/gen/global?db=' + choseDb
+        , toolbar: '#table_info_head_bar'
+        , cols: [[
+            {field: 'configKey', title: '配置名称'},
+            {field: 'configValue', title: '配置值', edit: 'text', event: 'updateGlobalConfig', style: 'color: #01AAED;'},
+            {fixed: 'right', title: '操作', toolbar: '#bar', width: 150}
+        ]],
+        page: true,
+        parseData: function (res) {
+            var configList = res.data.list;
+            return {
+                "code": res.success == 1 ? 0 : res.errorCode,
+                "msg": res.msg,
+                "data": configList
+            };
+        }
+
+    });
+
+    //监听行工具事件
+    table.on('tool(list_table)', function (obj) {
+        var data = obj.data;
+        if (obj.event === 'tableInfo') {
+            localStorage.setItem("table", data.tableName);
+            window.location.href = "tableInfoEdit.html"
+        }
+    });
+    table.on('tool(table_info)', function (obj) {
+        var data = obj.data;
+        if (obj.event === 'updateGlobalConfig') {
+            var type=8,key=data.configKey, value=data.configValue;
+            layer.prompt({
+                formType: 2
+                , title: '修改'
+                , value: value
+            }, function (value, index) {
+                $.ajax({
+                    type: "POST",
+                    url: "/gen/config",
+                    contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                    data: {
+                        configKey: key,
+                        configValue: value,
+                        type: type
+                    }, success: function (result) {
+                        if (result.success == 1) {
+                            layer.alert("配置修改成功");
+                            obj.update({
+                                configValue: value
+                            });
+                            layer.close(index);
+                        } else {
+                            layer.alert(result.msg);
+                        }
+
+                    }
+
+                });
+            });
+        }
+        if (obj.event === 'delete') {
+            var key = data.configKey;
+            $.ajax({
+                type: "delete",
+                url: "/gen/config/delete",
+                data: {
+                    configKey: key
+                }, success: function (result) {
+                    if (result.success == 1) {
+                        layer.alert("删除成功");
+                        tableReload();
+                    } else {
+                        layer.alert(result.msg);
+                    }
+
+                }
+            });
+        }
+
+    });
+
+    function newGlobalConfig() {
+        var columnName = $('input[name="columnName"]').val();
+        var fieldName = $('input[name="fieldName"]').val();
+        if (columnName == "" || fieldName == "") {
+            layer.alert("不可为空");
+            return;
+        }
+        var choseDb = localStorage.getItem("tableSchema");
+        var key = choseDb + "." + "global.columnName." + columnName;
+        var value = fieldName;
+        changeConfig(key, value, 8);
+        tableReload();
+    }
+
+    function tableReload() {
+        var choseDb = localStorage.getItem("tableSchema");
+        table.reload('table_info', {
+            url: '/gen/global?db=' + choseDb
+        });
+    }
+
+    function changeConfig(configKey, configValue, type) {
+        var key = choseDb + ".";
+        if (configKey.indexOf(key) < 0) {
+            configKey = key + configKey;
+        }
+        $.ajax({
+            type: "POST",
+            url: "/gen/config",
+            contentType: "application/x-www-form-urlencoded; charset=utf-8",
+            data: {
+                configKey: configKey,
+                configValue: configValue,
+                type: type
+            },
+            async:false,
+            success: function (result) {
+                if (result.success == 1) {
+                    layer.alert("配置修改成功");
+                } else {
+                    layer.alert(result.msg);
+                }
+
+            }
+
+        });
+
+    }
+
+</script>
+</body>
+</html>

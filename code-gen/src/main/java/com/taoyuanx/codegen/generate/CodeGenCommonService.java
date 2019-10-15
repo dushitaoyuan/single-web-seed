@@ -1,11 +1,11 @@
 package com.taoyuanx.codegen.generate;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ZipUtil;
 import com.taoyuanx.codegen.config.CodeGenProperties;
 import com.taoyuanx.codegen.handlers.ITableHandler;
 import com.taoyuanx.codegen.model.TableInfo;
 import com.taoyuanx.codegen.utils.GenUtil;
-import com.vip.vjtools.vjkit.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -135,7 +135,7 @@ public class CodeGenCommonService {
         fileName = iRender.render("controller", "${controllerFullName}.java", rendreData);
         doGenerate(baseDir,"controller.ftl", fileName, rendreData);
         File zip = ZipUtil.zip(baseDir);
-        FileUtil.deleteDir(baseDir);
+        FileUtil.del(baseDir);
         return  zip;
     }
 
