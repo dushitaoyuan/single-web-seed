@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>表</title>
+    <title>全局列,属性映射</title>
 
     <link rel="stylesheet" href="/layui/css/layui.css"/>
 </head>
@@ -41,13 +41,13 @@
 
 <script src="/layui/layui.all.js"></script>
 <script src="/js/jquery-3.4.1.js"></script>
+<script src="/js/common.js"></script>
 <script type="text/javascript">
     var table = layui.table;
-    var choseDb = localStorage.getItem("tableSchema");
-    $("#table-title").html(choseDb);
+    $("#table-title").html(getChoseDb());
     table.render({
         elem: '#table_info'
-        , url: '/gen/global?db=' + choseDb
+        , url: '/gen/global?db=' + getChoseDb()
         , toolbar: '#table_info_head_bar'
         , cols: [[
             {field: 'configKey', title: '配置名称'},
@@ -70,7 +70,7 @@
     table.on('tool(list_table)', function (obj) {
         var data = obj.data;
         if (obj.event === 'tableInfo') {
-            localStorage.setItem("table", data.tableName);
+            choseTable(data.tableName);
             window.location.href = "tableInfoEdit.html"
         }
     });
@@ -135,22 +135,21 @@
             layer.alert("不可为空");
             return;
         }
-        var choseDb = localStorage.getItem("tableSchema");
-        var key = choseDb + "." + "global.columnName." + columnName;
+
+        var key = getChoseDb() + "." + "global.columnName." + columnName;
         var value = fieldName;
         changeConfig(key, value, 8);
         tableReload();
     }
 
     function tableReload() {
-        var choseDb = localStorage.getItem("tableSchema");
         table.reload('table_info', {
-            url: '/gen/global?db=' + choseDb
+            url: '/gen/global?db=' + getChoseDb()
         });
     }
 
     function changeConfig(configKey, configValue, type) {
-        var key = choseDb + ".";
+        var key = getChoseDb() + ".";
         if (configKey.indexOf(key) < 0) {
             configKey = key + configKey;
         }

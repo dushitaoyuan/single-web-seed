@@ -24,9 +24,11 @@ public class ${entityFinalName}{
     <#if field.isKey??>
         @TableId("${field.columnName}")
         private ${field.javaType} ${field.fieldName};
+
     <#else>
         @TableField("${field.columnName}")
         private ${field.javaType} ${field.fieldName};
+
     </#if>
 </#list>
 }

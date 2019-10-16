@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>表</title>
+    <title>表实体编辑</title>
 
     <link rel="stylesheet" href="/layui/css/layui.css"/>
 </head>
@@ -64,14 +64,13 @@
 
 <script src="/layui/layui.all.js"></script>
 <script src="/js/jquery-3.4.1.js"></script>
+<script src="/js/common.js"></script>
 <script>
     var table = layui.table;
-    var choseDb = localStorage.getItem("tableSchema");
-    var choseTable = localStorage.getItem("table");
-    $("#table-title").html(choseDb + "/" + choseTable);
+    $("#table-title").html(getChoseDb() + "/" + getChoseTable());
     table.render({
         elem: '#table_info'
-        , url: '/gen/table?db=' + choseDb + "&tableName=" + choseTable
+        , url: '/gen/table?db=' + getChoseDb() + "&tableName=" + getChoseTable()
         , toolbar: '#table_info_head_bar'
         , cols: [[
             {field: 'columnName', title: '列名称'},
@@ -81,7 +80,7 @@
             {field: 'javaType', title: 'java类型', edit: 'text', event: 'updateJavaType', style: 'color: #01AAED;'},
             {field: 'isKey', title: '是否主键'}
         ]],
-        title: choseTable,
+        title: getChoseTable(),
         page: false,
         parseData: function (res) {
             var comlumnList = res.data.entityFields;
@@ -102,11 +101,11 @@
 
     table.on('toolbar(table_info)', function (obj) {
         var checkStatus = table.checkStatus(obj.config.id);
-        window.location.href="/gen/gen?tableName="+choseTable+"&db="+choseDb;
+        window.location.href="/gen/gen?tableName="+getChoseTable()+"&db="+getChoseDb();
     });
     table.on('tool(table_info)', function (obj) {
         var data = obj.data;
-        var type, key = choseDb + '.' + choseTable + ".", value;
+        var type, key = getChoseDb() + '.' + getChoseTable() + ".", value;
         if (obj.event === 'updateField') {
             key += data.columnName;
             type = 2;
@@ -166,7 +165,7 @@
 
 
     function changeConfig(configKey, configValue, type) {
-        var key = choseDb + '.' + choseTable + ".";
+        var key = getChoseDb() + '.' + getChoseTable() + ".";
         if (configKey.indexOf(key) < 0) {
             configKey = key + configKey;
         }

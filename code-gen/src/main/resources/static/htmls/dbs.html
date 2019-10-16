@@ -11,6 +11,7 @@
 
 <script src="/layui/layui.all.js"></script>
 <script src="/js/jquery-3.4.1.js"></script>
+<script src="/js/common.js"></script>
 <script type="text/html" id="bar">
     <a class="layui-btn layui-btn-xs" lay-event="showTable">查看表</a>
 </script>
@@ -43,7 +44,7 @@
     table.on('tool(db_table)', function(obj){
         var data = obj.data;
         if(obj.event === 'showTable'){
-            localStorage.setItem("tableSchema",data.name);
+            choseDb(data.name);
             window.location.href="tableList.html"
         }
     });

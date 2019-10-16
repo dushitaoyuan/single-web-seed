@@ -145,6 +145,9 @@ public class MysqlTableHandler implements ITableHandler {
             case FIELDNAME:
                 return GenUtil.toHumpName(value, false);
             default:
+                if(StringUtils.isEmpty(value)){
+                    return null;
+                }
                 return value;
         }
     }

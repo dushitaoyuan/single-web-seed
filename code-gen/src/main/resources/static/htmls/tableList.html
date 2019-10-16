@@ -13,16 +13,16 @@
 
 <script src="/layui/layui.all.js"></script>
 <script src="/js/jquery-3.4.1.js"></script>
+<script src="/js/common.js"></script>
 <script type="text/html" id="bar">
     <a class="layui-btn layui-btn-xs" lay-event="tableInfo">查看表信息</a>
 </script>
 <script>
-    var table = layui.table
-    var choseDb=localStorage.getItem("tableSchema");
-    $("#db-title").html(choseDb);
+    var table = layui.table;
+    $("#db-title").html(getChoseDb());
     table.render({
         elem: '#list_table'
-        , url: '/gen/listTable?db='+choseDb
+        , url: '/gen/listTable?db='+getChoseDb()
         , cols: [[
             {field: 'tableName', title: '表名'},
              {field: 'tableCommnet', title: '表注释'},
@@ -32,7 +32,7 @@
              {field: 'updateTime', title: '更新时间'},
             {fixed: 'right', title:'操作', toolbar: '#bar', width:150}
         ]],
-        title:choseDb,
+        title:getChoseDb(),
         page:true,
         parseData: function (res) {
             return {
@@ -52,7 +52,7 @@
     table.on('tool(list_table)', function(obj){
         var data = obj.data;
         if(obj.event === 'tableInfo'){
-            localStorage.setItem("table",data.tableName);
+            choseTable(data.tableName);
             window.location.href="tableInfoEdit.html"
         }
     });
