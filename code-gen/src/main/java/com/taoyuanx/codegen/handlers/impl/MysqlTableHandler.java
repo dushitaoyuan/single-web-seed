@@ -9,11 +9,13 @@ import com.taoyuanx.codegen.domain.GenConfig;
 import com.taoyuanx.codegen.domain.TableColumn;
 import com.taoyuanx.codegen.domain.TableComment;
 import com.taoyuanx.codegen.enums.ConfigType;
+import com.taoyuanx.codegen.generate.type.TypeHander;
 import com.taoyuanx.codegen.handlers.ITableHandler;
 import com.taoyuanx.codegen.model.EntityField;
 import com.taoyuanx.codegen.model.TableInfo;
 import com.taoyuanx.codegen.utils.GenUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -39,6 +41,10 @@ public class MysqlTableHandler implements ITableHandler {
     @Autowired
     @Qualifier("genConfigCache")
     LoadingCache<String, GenConfig> genConfigCache;
+
+    @Autowired
+    @Qualifier("mysqlTypeHander")
+    TypeHander mysqlTypeHander;
     @Override
     public TableInfo explain(String tableSchema, String tableName) {
         Joiner joiner = Joiner.on(".");
@@ -94,21 +100,14 @@ public class MysqlTableHandler implements ITableHandler {
                 }
                 field.setFieldName(fieldName);
                 field.setColumnType(tableColumn.getColumnType());
-                Class type = GenUtil.type(tableColumn.getColumnType());
-                String javaType = explainName(ConfigType.JAVATYPE, joiner.join(new String[]{keyPrefix, tableColumn.getColumnName(), ConfigType.JAVATYPE.key}),
-                        type.getSimpleName(), tableSchema, tableName);
-                if (javaType.indexOf(".") > 0) {
-                    try {
-                        type = Class.forName(javaType);
-                    } catch (ClassNotFoundException e) {
-                        log.error("javaType not right", e);
-                    }
-                }
-                String fullJavaType = type.getName();
-                field.setJavaType(type.getSimpleName());
+                String stripColumnType= mysqlTypeHander.stripToUpper(tableColumn.getColumnType());
+                String javaType =  explainName(ConfigType.JAVATYPE, joiner.join(new String[]{keyPrefix, tableColumn.getColumnName(), ConfigType.JAVATYPE.key}),
+                        mysqlTypeHander.columnTypeToJavaType(stripColumnType), tableSchema, tableName);
+                String fullJavaType = mysqlTypeHander.toFullJavaType(javaType);
+                field.setJavaType(javaType);
                 field.setFullJavaType(fullJavaType);
-                field.setJavaClass(type);
-                field.setJdbcType(GenUtil.jdbcType(tableColumn.getColumnType()));
+                field.setJdbcType(mysqlTypeHander.columnTypeToJdbcType(stripColumnType));
+                field.setBolb(mysqlTypeHander.isBlob(stripColumnType));
                 autoImport(fullJavaType, tableInfo);
                 String fieldComment = explainName(ConfigType.FIELDCOMMENT, joiner.join(new String[]{keyPrefix, tableColumn.getColumnName(), ConfigType.FIELDCOMMENT.key}),
                         tableColumn.getColumnComment(), tableSchema, tableName);
@@ -145,9 +144,6 @@ public class MysqlTableHandler implements ITableHandler {
             case FIELDNAME:
                 return GenUtil.toHumpName(value, false);
             default:
-                if(StringUtils.isEmpty(value)){
-                    return null;
-                }
                 return value;
         }
     }

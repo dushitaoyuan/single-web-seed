@@ -16,11 +16,11 @@ import lombok.Data;
 @TableName("${table.tableName}")
 public class ${entityFinalName}{
 <#list table.entityFields as field>
-    <#if field.fieldComment??>
+    <@str value="${field.fieldComment}">
         /*
         * ${field.fieldComment}
         */
-    </#if>
+    </@str>
     <#if field.isKey??>
         @TableId("${field.columnName}")
         private ${field.javaType} ${field.fieldName};

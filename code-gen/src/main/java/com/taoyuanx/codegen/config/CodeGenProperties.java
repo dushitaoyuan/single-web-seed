@@ -1,8 +1,14 @@
 package com.taoyuanx.codegen.config;
 
 import lombok.Data;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author dushitaoyuan
@@ -12,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties("code.gen")
 @Data
-public class CodeGenProperties {
+public class CodeGenProperties  {
     private String tablePrefix;
     private String moduleName;
     private String parentPackageName;
@@ -50,4 +56,12 @@ public class CodeGenProperties {
     private String controllerPackage = "controller";
 
     private String controllerSuffix = "Controller";
+
+
+    //类型映射 columnType-javaType
+    private Map<String,String> typeMapping;
+    //类型映射 columnType-jdbcType
+    private Map<String,String> jdbcMapping;
+
+
 }

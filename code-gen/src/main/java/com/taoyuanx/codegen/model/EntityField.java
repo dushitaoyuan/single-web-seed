@@ -37,8 +37,7 @@ public class EntityField {
      * 列类型
      */
     private String columnType;
-    @JsonIgnore
-    private Class javaClass;
+
 
     @JsonIgnore
     private String fullJavaType;
@@ -46,4 +45,6 @@ public class EntityField {
      * 是否主键
      */
     private Boolean isKey;
+    //是否为blob类型
+    private Boolean bolb;
 }

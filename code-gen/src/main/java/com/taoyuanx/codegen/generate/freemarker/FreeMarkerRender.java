@@ -1,6 +1,8 @@
 package com.taoyuanx.codegen.generate.freemarker;
 
 import com.taoyuanx.codegen.generate.IRender;
+import com.taoyuanx.codegen.generate.freemarker.func.ResolveMapperFunc;
+import com.taoyuanx.codegen.generate.freemarker.tag.StringEmptyTag;
 import freemarker.cache.FileTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -23,6 +25,7 @@ public class FreeMarkerRender implements IRender {
     public FreeMarkerRender(Configuration configuration) {
         this.configuration = configuration;
         configuration.setEncoding(Locale.CHINESE, "UTF-8");
+        initFreeMarker(configuration);
     }
 
     public FreeMarkerRender(String templateDir) {
@@ -40,6 +43,8 @@ public class FreeMarkerRender implements IRender {
                 configuration.setTemplateLoader(new FileTemplateLoader(file));
             }
             configuration.setEncoding(Locale.CHINESE, "UTF-8");
+
+            initFreeMarker(configuration);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -58,15 +63,21 @@ public class FreeMarkerRender implements IRender {
     }
 
     @Override
-    public String render(String templateName,String templateContent, Map<String, Object> renderData) {
+    public String render(String templateName, String templateContent, Map<String, Object> renderData) {
         try {
-            Template tp = new Template(templateName,templateContent,configuration);
+            Template tp = new Template(templateName, templateContent, configuration);
             StringWriter stringWriter = new StringWriter();
             tp.process(renderData, stringWriter);
             return stringWriter.toString();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    private void initFreeMarker(Configuration configuration) {
+        configuration.setSharedVariable(StringEmptyTag.TAG_NAME, new StringEmptyTag());
+        configuration.setSharedVariable(ResolveMapperFunc.FUN_NAME, new ResolveMapperFunc());
     }
 
 

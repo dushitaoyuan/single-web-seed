@@ -31,18 +31,26 @@ key-value,type形式,配置key按照规则自定约定和解析,不严格来说�
 6. 列名称到属性的映射中,全局配置高于局部配置,全局配置用于转换通用列到属性的映射,常见场景为(版号,时间,序列等)
 
 ## 核心类
-ITableHandler,MysqlTableHandler,IRender,CodeGenCommonService,CodeGenController
+ITableHandler,MysqlTableHandler,IRender,CodeGenCommonService,CodeGenController,TypeHander
 
+TypeHander 负责进行 数据表数据类型(columnType)到 java类型 以及mybatis jdbcType的转换,用户可在
+application.properties 配置 typeMapping,jdbcMapping 自定义转换
 ## 代码生成介绍
 
 一款基于web的自由灵活的轻型代码生成器
 
 ## 系统截图
+
 ![avatar](https://github.com/dushitaoyuan/single-web-seed/blob/master/imgs/db.png)
 
 ![avatar](https://github.com/dushitaoyuan/single-web-seed/blob/master/imgs/table.png)
 
+
+
 ![avatar](https://github.com/dushitaoyuan/single-web-seed/blob/master/imgs/global.png)
+
+
+
 
 ![avatar](https://github.com/dushitaoyuan/single-web-seed/blob/master/imgs/table_edit.png)
 

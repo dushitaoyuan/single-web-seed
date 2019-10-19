@@ -15,7 +15,6 @@ public class TableComment {
     private String tableName;
     private String tableCommnet;
     private String engine;
-    private String tableRows;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")

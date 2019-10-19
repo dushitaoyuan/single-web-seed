@@ -7,9 +7,9 @@
                type="${entityFullName}">
         <#list table.entityFields as field>
             <#if field.isKey??>
-                <id column="${field.columnName}" <#if field.jdbcType??>jdbcType="${field.jdbcType}"</#if> <#if field.javaType??>javaType="${field.fullJavaType}"</#if> property="${field.fieldName}"/>
+                <id column="${field.columnName}" property="${field.fieldName}"/>
             <#else>
-                <result column="${field.columnName}" <#if field.jdbcType??>jdbcType="${field.jdbcType}"</#if> <#if field.javaType??>javaType="${field.fullJavaType}"</#if> property="${field.fieldName}"/>
+                    <result column="${field.columnName}" property="${field.fieldName}" ${resolve(field.javaType,field.jdbcType,'javaType="%s" jdbcType="%s"')}/>
             </#if>
         </#list>
     </resultMap>

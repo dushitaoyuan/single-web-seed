@@ -1,8 +1,11 @@
 package com.taoyuanx.codegen.config;
 
+import com.baomidou.mybatisplus.core.MybatisMapperAnnotationBuilder;
 import com.taoyuanx.codegen.exception.SystemExceptionHandler;
 import com.taoyuanx.codegen.generate.freemarker.FreeMarkerRender;
 import com.taoyuanx.codegen.generate.IRender;
+import com.taoyuanx.codegen.generate.type.TypeHander;
+import com.taoyuanx.codegen.generate.type.impl.MysqlTypeHander;
 import com.taoyuanx.commons.api.Result;
 import com.taoyuanx.commons.api.ResultBuilder;
 import com.taoyuanx.commons.utils.SpringContextUtil;
@@ -47,6 +50,13 @@ public class CodeGenConfig {
     public IRender render(CodeGenProperties codeGenProperties){
         FreeMarkerRender render=new FreeMarkerRender(codeGenProperties.getTemplateDir());
         return render;
+    }
+
+    @Bean("mysqlTypeHander")
+    @Autowired
+    public TypeHander mysqlTypeHander(CodeGenProperties codeGenProperties){
+        TypeHander typeHander=new MysqlTypeHander(codeGenProperties.getTypeMapping(),codeGenProperties.getJdbcMapping());
+        return typeHander;
     }
 
     /**

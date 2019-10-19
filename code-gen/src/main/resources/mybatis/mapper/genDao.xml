@@ -5,7 +5,6 @@
         <result property="tableCommnet" column="table_comment"/>
         <result property="tableName" column="table_name"/>
         <result property="engine" column="ENGINE"/>
-        <result property="tableRows" column="table_rows"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
@@ -19,35 +18,34 @@
 
 
     <select id="listTables" resultMap="tableMap">
-SELECT
-  `table_name`,
-  table_comment,
-   `ENGINE`,
-  table_rows,
-  create_time,
-    update_time
-FROM
-  information_schema.tables
-WHERE table_schema = #{tableSchema}
+        SELECT
+          `table_name`,
+          table_comment,
+           `ENGINE`,
+          create_time,
+            update_time
+        FROM
+          information_schema.tables
+        WHERE table_schema = #{tableSchema}
     </select>
     <select id="listColumn" resultMap="columnMap">
-        SELECT
-  `column_name`,
-  column_comment,
-  column_type,
-  column_key
-FROM
-  information_schema.columns
-WHERE table_schema = #{tableSchema}
-  AND table_name = #{tableName}
+                SELECT
+          `column_name`,
+          column_comment,
+          column_type,
+          column_key
+        FROM
+          information_schema.columns
+        WHERE table_schema = #{tableSchema}
+          AND table_name = #{tableName}
     </select>
     <select id="getTable" resultMap="tableMap">
-SELECT
-  `table_name`,
-  table_comment
-FROM
-  information_schema.tables
-WHERE table_schema = #{tableSchema}   AND table_name = #{tableName}
+        SELECT
+          `table_name`,
+          table_comment
+        FROM
+          information_schema.tables
+        WHERE table_schema = #{tableSchema}   AND table_name = #{tableName}
     </select>
     <select id="listAllTableSchema" resultType="com.taoyuanx.codegen.domain.TableSchema">
             SELECT schema_name name,DEFAULT_CHARACTER_SET_NAME charset FROM information_schema.SCHEMATA
