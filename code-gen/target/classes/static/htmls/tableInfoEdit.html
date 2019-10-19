@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>表实体编辑</title>
+
+    <link rel="stylesheet" href="/layui/css/layui.css"/>
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend id="table-title"></legend>
+</fieldset>
+
+<form class="layui-form">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">包名</label>
+            <div class="layui-input-block">
+                <input type="text" name="packageName" autocomplete="off" width="100" placeholder="包名"
+                       class="layui-input" onchange="changeConfig('packageName',this.value,1)">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">模块名</label>
+            <div class="layui-input-block">
+                <input type="text" name="moduleName" autocomplete="off" placeholder="包名" class="layui-input"
+                       onchange="changeConfig('moduleName',this.value,6)">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">父包名</label>
+            <div class="layui-input-block">
+                <input type="text" name="parentPackageName" autocomplete="off" placeholder="父包名" class="layui-input"
+                       onchange="changeConfig('parentPackageName',this.value,7)">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">实体名</label>
+            <div class="layui-input-block">
+                <input type="text" name="entityName" autocomplete="off" placeholder="实体名" class="layui-input"
+                       onchange="changeConfig('entityName',this.value,0)">
+            </div>
+        </div>
+
+        </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">实体注释</label>
+        <div class="layui-input-block">
+            <textarea placeholder="实体注释" name="entityComment" class="layui-textarea" onchange="changeConfig('entityComment',this.value,5)"></textarea>
+        </div>
+    </div>
+
+</form>
+
+<table class="layui-hide" id="table_info" lay-filter="table_info">
+
+</table>
+
+<script type="text/html" id="table_info_head_bar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="codeGen">代码生成</button>
+    </div>
+</script>
+
+<script src="/layui/layui.all.js"></script>
+<script src="/js/jquery-3.4.1.js"></script>
+<script src="/js/common.js"></script>
+<script>
+    var table = layui.table;
+    $("#table-title").html(getChoseDb() + "/" + getChoseTable());
+    table.render({
+        elem: '#table_info'
+        , url: '/gen/table?db=' + getChoseDb() + "&tableName=" + getChoseTable()
+        , toolbar: '#table_info_head_bar'
+        , cols: [[
+            {field: 'columnName', title: '列名称'},
+            {field: 'columnType', title: '列类型'},
+            {field: 'fieldName', title: '属性名称', edit: 'text', event: 'updateField', style: 'color: #01AAED;'},
+            {field: 'fieldComment', title: '属性注释', edit: 'text', event: 'updateComment', style: 'color: #01AAED;'},
+            {field: 'javaType', title: 'java类型', edit: 'text', event: 'updateJavaType', style: 'color: #01AAED;'},
+            {field: 'isKey', title: '是否主键'}
+        ]],
+        title: getChoseTable(),
+        page: false,
+        parseData: function (res) {
+            var comlumnList = res.data.entityFields;
+            $('input[name="packageName"]').val(res.data.packageName);
+            $('input[name="moduleName"]').val(res.data.moduleName);
+            $('input[name="parentPackageName"]').val(res.data.parentPackageName);
+            $('input[name="entityName"]').val(res.data.entityName);
+            $('textarea[name="entityComment"]').val(res.data.entityComment);
+
+            return {
+                "code": res.success == 1 ? 0 : res.errorCode,
+                "msg": res.msg,
+                "data": comlumnList
+            };
+        }
+
+    });
+
+    table.on('toolbar(table_info)', function (obj) {
+        var checkStatus = table.checkStatus(obj.config.id);
+        window.location.href="/gen/gen?tableName="+getChoseTable()+"&db="+getChoseDb();
+    });
+    table.on('tool(table_info)', function (obj) {
+        var data = obj.data;
+        var type, key = getChoseDb() + '.' + getChoseTable() + ".", value;
+        if (obj.event === 'updateField') {
+            key += data.columnName;
+            type = 2;
+            value = data.fieldName;
+        } else if (obj.event === 'updateComment') {
+            key += data.columnName + '.fieldComment';
+            type = 4;
+            value = data.fieldComment;
+        } else if (obj.event === 'updateJavaType') {
+            key += data.columnName + '.javaType';
+            type = 3;
+            value = data.javaType;
+        }
+        layer.prompt({
+            formType: 2
+            , title: '修改'
+            , value: value
+        }, function (value, index) {
+            $.ajax({
+                type: "POST",
+                url: "/gen/config",
+                contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                data: {
+                    configKey: key,
+                    configValue: value,
+                    type: type
+                }, success: function (result) {
+                    if (result.success == 1) {
+                        layer.alert("配置修改成功");
+                        switch (type) {
+                            case 2:
+                                obj.update({
+                                    fieldName: value
+                                });
+                                break;
+                            case 4:
+                                obj.update({
+                                    fieldComment: value
+                                });
+                                break;
+                            case 3:
+                                obj.update({
+                                    javaType: value
+                                });
+                                break;
+                        }
+                        layer.close(index);
+                    } else {
+                        layer.alert(result.msg);
+                    }
+
+                }
+
+            });
+        });
+    });
+
+
+    function changeConfig(configKey, configValue, type) {
+        var key = getChoseDb() + '.' + getChoseTable() + ".";
+        if (configKey.indexOf(key) < 0) {
+            configKey = key + configKey;
+        }
+        $.ajax({
+            type: "POST",
+            url: "/gen/config",
+            contentType: "application/x-www-form-urlencoded; charset=utf-8",
+            data: {
+                configKey: configKey,
+                configValue: configValue,
+                type: type
+            },
+            success: function (result) {
+                if (result.success == 1) {
+                    layer.alert("配置修改成功");
+                } else {
+                    layer.alert(result.msg);
+                }
+
+            }
+
+        });
+
+    }
+
+</script>
+</body>
+</html>

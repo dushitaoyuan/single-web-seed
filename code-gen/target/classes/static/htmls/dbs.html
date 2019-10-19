@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>库</title>
+    <link rel="stylesheet" href="/layui/css/layui.css"/>
+</head>
+<body>
+
+<table class="layui-hide" id="db_table" lay-filter="db_table"></table>
+
+<script src="/layui/layui.all.js"></script>
+<script src="/js/jquery-3.4.1.js"></script>
+<script src="/js/common.js"></script>
+<script type="text/html" id="bar">
+    <a class="layui-btn layui-btn-xs" lay-event="showTable">查看表</a>
+</script>
+<script>
+    var table = layui.table
+    table.render({
+        elem: '#db_table'
+        , url: '/gen/listSchema/'
+        , cols: [[
+            {field: 'name', title: '数据库'}
+            , {field: 'charset', title: '默认字符集'},
+            {fixed: 'right', title:'操作', toolbar: '#bar', width:150}
+        ]],
+        page:true,
+        parseData: function (res) {
+            return {
+                "code": res.success == 1 ? 0 : res.errorCode,
+                "msg": res.msg,
+                "count": res.data.total,
+                "data": res.data.list
+            };
+        },
+        request: {
+            pageName: 'pageNum'
+            , limitName: 'pageSize'
+        }
+
+    });
+    //监听行工具事件
+    table.on('tool(db_table)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'showTable'){
+            choseDb(data.name);
+            window.location.href="tableList.html"
+        }
+    });
+</script>
+</body>
+</html>

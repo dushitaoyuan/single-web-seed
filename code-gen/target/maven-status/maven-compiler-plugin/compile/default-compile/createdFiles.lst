@@ -1,0 +1,15 @@
+com\taoyuanx\codegen\handlers\ITableHandler.class
+com\taoyuanx\codegen\exception\ServiceException.class
+com\taoyuanx\codegen\controller\CodeGenController.class
+com\taoyuanx\codegen\dao\GenDao.class
+com\taoyuanx\codegen\exception\UnAuthException.class
+com\taoyuanx\codegen\config\SeedConfig.class
+com\taoyuanx\codegen\domain\TableColumn.class
+com\taoyuanx\codegen\exception\SystemExceptionHandler.class
+com\taoyuanx\codegen\exception\ValidatorException.class
+com\taoyuanx\codegen\service\GenService.class
+com\taoyuanx\codegen\handlers\impl\MysqlTableHandler.class
+com\taoyuanx\codegen\CodeGenBootApplication.class
+com\taoyuanx\codegen\config\SeedConfig$ResponseHandler.class
+com\taoyuanx\codegen\domain\TableComment.class
+com\taoyuanx\codegen\model\TableInfo.class

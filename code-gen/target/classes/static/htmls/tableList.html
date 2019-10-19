@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>表</title>
+    <link rel="stylesheet" href="/layui/css/layui.css"/>
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend id="db-title"></legend>
+</fieldset>
+<table class="layui-hide" id="list_table" lay-filter="list_table"></table>
+
+<script src="/layui/layui.all.js"></script>
+<script src="/js/jquery-3.4.1.js"></script>
+<script src="/js/common.js"></script>
+<script type="text/html" id="bar">
+    <a class="layui-btn layui-btn-xs" lay-event="tableInfo">查看表信息</a>
+</script>
+<script>
+    var table = layui.table;
+    $("#db-title").html(getChoseDb());
+    table.render({
+        elem: '#list_table'
+        , url: '/gen/listTable?db='+getChoseDb()
+        , cols: [[
+            {field: 'tableName', title: '表名'},
+             {field: 'tableCommnet', title: '表注释'},
+            {field: 'engine', title: '存储引擎'},
+            {field: 'createTime', title: '创建时间'},
+             {field: 'updateTime', title: '更新时间'},
+            {fixed: 'right', title:'操作', toolbar: '#bar', width:150}
+        ]],
+        title:getChoseDb(),
+        page:true,
+        parseData: function (res) {
+            return {
+                "code": res.success == 1 ? 0 : res.errorCode,
+                "msg": res.msg,
+                "count": res.data.total,
+                "data": res.data.list
+            };
+        },
+        request: {
+            pageName: 'pageNum'
+            , limitName: 'pageSize'
+        }
+
+    });
+    //监听行工具事件
+    table.on('tool(list_table)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'tableInfo'){
+            choseTable(data.tableName);
+            window.location.href="tableInfoEdit.html"
+        }
+    });
+</script>
+</body>
+</html>

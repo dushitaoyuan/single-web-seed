@@ -1,0 +1,14 @@
+G:\devwork\iwork\single-web-seed\code-gen\src\main\java\com\taoyuanx\codegen\handlers\ITableHandler.java
+G:\devwork\iwork\single-web-seed\code-gen\src\main\java\com\taoyuanx\codegen\exception\SystemExceptionHandler.java
+G:\devwork\iwork\single-web-seed\code-gen\src\main\java\com\taoyuanx\codegen\exception\ValidatorException.java
+G:\devwork\iwork\single-web-seed\code-gen\src\main\java\com\taoyuanx\codegen\controller\CodeGenController.java
+G:\devwork\iwork\single-web-seed\code-gen\src\main\java\com\taoyuanx\codegen\exception\UnAuthException.java
+G:\devwork\iwork\single-web-seed\code-gen\src\main\java\com\taoyuanx\codegen\config\SeedConfig.java
+G:\devwork\iwork\single-web-seed\code-gen\src\main\java\com\taoyuanx\codegen\domain\TableColumn.java
+G:\devwork\iwork\single-web-seed\code-gen\src\main\java\com\taoyuanx\codegen\CodeGenBootApplication.java
+G:\devwork\iwork\single-web-seed\code-gen\src\main\java\com\taoyuanx\codegen\dao\GenDao.java
+G:\devwork\iwork\single-web-seed\code-gen\src\main\java\com\taoyuanx\codegen\exception\ServiceException.java
+G:\devwork\iwork\single-web-seed\code-gen\src\main\java\com\taoyuanx\codegen\service\GenService.java
+G:\devwork\iwork\single-web-seed\code-gen\src\main\java\com\taoyuanx\codegen\model\TableInfo.java
+G:\devwork\iwork\single-web-seed\code-gen\src\main\java\com\taoyuanx\codegen\domain\TableComment.java
+G:\devwork\iwork\single-web-seed\code-gen\src\main\java\com\taoyuanx\codegen\handlers\impl\MysqlTableHandler.java
